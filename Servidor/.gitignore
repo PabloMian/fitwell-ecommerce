@@ -1,0 +1,18 @@
+@"
+# Dependencias
+node_modules/
+
+# Variables de entorno
+.env
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# IDEs
+.vscode/
+.idea/
+"@ | Out-File -FilePath .gitignore -Encoding utf8

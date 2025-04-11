@@ -1,0 +1,76 @@
+/* Estilos generales de las cards */
+.card-custom {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: white;
+  }
+  
+  /* Efecto de hover */
+  .card-custom:hover {
+    transform: translateY(-8px); /* Elevar la card */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Estilos para las imágenes */
+  .card-img-custom {
+    height: 200px; /* Tamaño fijo */
+    width: 100%;
+    object-fit: contain; /* Ajustar sin cortar */
+    padding: 10px; /* Margen interno para evitar cortes */
+    background-color: #f1f1f1; /* Color de fondo para mejorar el contraste */
+    border-bottom: 2px solid #ddd;
+  }
+  
+  /* Estilos del cuerpo de la card */
+  .card-body-custom {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 15px;
+  }
+  
+  /* Pie de la card */
+  .card-footer {
+    text-align: center;
+    padding: 12px;
+    background-color: #f8f9fa;
+    font-weight: bold;
+    border-top: 2px solid #ddd;
+  }
+  
+  /* Botón con efecto */
+  .btn-custom {
+    background-color: #007bff;
+    color: white;
+    border-radius: 8px;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+  
+  .btn-custom:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+  }
+  
+  /* Estilo para el botón Ver más */
+.btn-ver-mas {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-ver-mas:hover {
+  background-color: #0069d9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
