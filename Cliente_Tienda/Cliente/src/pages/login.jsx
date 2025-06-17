@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container } from 'react-bootstrap';
+import { Container, Card, Row, Col } from 'react-bootstrap';
 
 const Login = ({ setUser }) => {
   const navigate = useNavigate();
@@ -28,29 +28,44 @@ const Login = ({ setUser }) => {
       body: JSON.stringify({ idToken })
     })
     .then(res => {
-      if (!res.ok) throw new Error('Network response was not ok');
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       return res.json();
     })
     .then(data => {
-      if (data.user) {
+      if (data.user && data.token) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         setUser(data.user);
         navigate('/');
       } else {
-        console.error('No user data in response:', data);
+        console.error('Respuesta inválida del servidor:', data);
+        alert('Error al iniciar sesión. Intenta de nuevo.');
       }
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => {
+      console.error('Error en la autenticación:', error);
+      alert('Error al conectar con el servidor. Verifica que esté corriendo.');
+    });
   };
 
   return (
-    <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
-      <div>
-        <div id="googleSignInDiv"></div>
-        <p className="text-center mt-3">O <a href="/registro">regístrate</a> si no tienes cuenta.</p>
-      </div>
-    </Container>
+    <div className="login-background d-flex justify-content-center align-items-center min-vh-100">
+      <Container>
+        <Row className="justify-content-center">
+          <Col md={6} lg={4}>
+            <Card className="p-4 shadow-lg bg-white rounded-3">
+              <h2 className="text-center mb-4 text-primary">Iniciar Sesión</h2>
+              <div className="d-flex justify-content-center mb-3">
+                <div id="googleSignInDiv"></div>
+              </div>
+              <p className="text-center">
+                O <span className="text-info fw-bold">regístrate</span> si no tienes cuenta.
+              </p>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+    </div>
   );
 };
 

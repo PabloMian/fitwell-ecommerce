@@ -1,4 +1,4 @@
-import { Navbar, Container, Nav, Badge, Dropdown, Button } from "react-bootstrap";
+import { Navbar, Container, Nav, Badge, Dropdown, Button, NavLink } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../components/images/logo.png";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,7 +8,7 @@ import {
   faUserCircle,
   faMapMarkerAlt,
   faSignInAlt,
-  faBox // Importa el ícono del paquete
+  faBox
 } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
 
@@ -28,8 +28,11 @@ const Header = ({ user, handleLogout, cartItemsCount = 0 }) => {
     navigate('/');
   };
 
-  const handleAdminOption = (path) => {
-    navigate(path);
+  const handleProfileClick = () => {
+    if (user) {
+      console.log('Navegando a /perfil');
+      navigate('/perfil');
+    }
   };
 
   return (
@@ -49,7 +52,11 @@ const Header = ({ user, handleLogout, cartItemsCount = 0 }) => {
           />
           
           {user ? (
-            <div className="d-none d-md-flex align-items-start ms-3 text-white">
+            <NavLink 
+              className="d-none d-md-flex align-items-start ms-3 text-white"
+              onClick={handleProfileClick}
+              style={{ cursor: 'pointer', textDecoration: 'none' }}
+            >
               <FontAwesomeIcon icon={faUserCircle} className="me-2 mt-1" />
               <div>
                 <div className="fw-bold">{user.nombre}</div>
@@ -60,19 +67,16 @@ const Header = ({ user, handleLogout, cartItemsCount = 0 }) => {
                   </div>
                 )}
               </div>
-            </div>
+            </NavLink>
           ) : (
-            <div className="d-none d-md-flex align-items-center ms-3">
-              <Button 
-                variant="outline-light" 
-                size="sm" 
-                onClick={() => navigate('/login')}
-                className="d-flex align-items-center"
-              >
-                <FontAwesomeIcon icon={faSignInAlt} className="me-2" />
-                Iniciar sesión
-              </Button>
-            </div>
+            <NavLink 
+              className="d-none d-md-flex align-items-center ms-3 text-white"
+              onClick={() => navigate('/login')}
+              style={{ cursor: 'pointer', textDecoration: 'none', padding: '0.25rem 0.5rem' }}
+            >
+              <FontAwesomeIcon icon={faSignInAlt} className="me-2" />
+              Iniciar sesión
+            </NavLink>
           )}
         </Navbar.Brand>
 
@@ -80,20 +84,19 @@ const Header = ({ user, handleLogout, cartItemsCount = 0 }) => {
 
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="ms-auto align-items-center gap-2">
-            {/* Menú de administración solo para admin */}
             {user?.rol === 'admin' && (
               <Dropdown className="me-2">
                 <Dropdown.Toggle variant="outline-light" id="admin-dropdown">
                   Opciones de producto
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="dropdown-menu-dark">
-                  <Dropdown.Item onClick={() => handleAdminOption('/newproduct')}>
+                  <Dropdown.Item onClick={() => navigate('/newproduct')}>
                     Nuevo producto
                   </Dropdown.Item>
-                  <Dropdown.Item onClick={() => handleAdminOption('/updateproduct')}>
+                  <Dropdown.Item onClick={() => navigate('/updateproduct')}>
                     Actualizar producto
                   </Dropdown.Item>
-                  <Dropdown.Item onClick={() => handleAdminOption('/deleteproduct')}>
+                  <Dropdown.Item onClick={() => navigate('/deleteproduct')}>
                     Eliminar producto
                   </Dropdown.Item>
                 </Dropdown.Menu>
@@ -122,6 +125,9 @@ const Header = ({ user, handleLogout, cartItemsCount = 0 }) => {
                       </div>
                     )}
                   </Dropdown.Header>
+                  <Dropdown.Item onClick={handleProfileClick}>
+                    Ver perfil
+                  </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             ) : (

@@ -37,8 +37,7 @@ app.get("/api", (req, res) => {
 
 // Configuración de rutas
 app.use("/api/productos", productosRoutes);
-app.use("/api/auth", usuariosRoutes);
-app.use("/api/auth", authRoutes); // Monta auth.js
+app.use("/api/auth", authRoutes); // Usa solo authRoutes para /api/auth
 app.use("/api/pedidos", pedidosRoutes);
 
 // Manejo de errores
@@ -57,9 +56,8 @@ app.listen(PORT, () => {
   console.log(`
   🚀 Servidor activo en: http://localhost:${PORT}
   Rutas disponibles:
-  - POST   http://localhost:${PORT}/api/auth/registro
-  - POST   http://localhost:${PORT}/api/auth/login
-  - POST   http://localhost:${PORT}/api/auth/google  // Nueva ruta
+  - POST   http://localhost:${PORT}/api/auth/google
+  - GET    http://localhost:${PORT}/api/productos
   - GET    http://localhost:${PORT}/api/pedidos/:usuario_id
   - POST   http://localhost:${PORT}/api/pedidos
   `);
