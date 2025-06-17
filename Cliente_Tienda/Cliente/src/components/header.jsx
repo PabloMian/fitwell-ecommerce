@@ -1,4 +1,4 @@
-import { Navbar, Container, Nav, Badge, Dropdown, Button, NavLink } from "react-bootstrap";
+import { Navbar, Container, Nav, Badge, Dropdown, NavLink } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../components/images/logo.png";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,9 +8,11 @@ import {
   faUserCircle,
   faMapMarkerAlt,
   faSignInAlt,
-  faBox
+  faBox,
+  faFileExcel
 } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const Header = ({ user, handleLogout, cartItemsCount = 0 }) => {
   const navigate = useNavigate();
@@ -32,6 +34,43 @@ const Header = ({ user, handleLogout, cartItemsCount = 0 }) => {
     if (user) {
       console.log('Navegando a /perfil');
       navigate('/perfil');
+    }
+  };
+
+  const handleExportProductos = async () => {
+    try {
+      const response = await axios({
+        url: 'http://localhost:3005/api/exportar-productos',
+        method: 'GET',
+        responseType: 'blob'
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'productos.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.success('Archivo Excel descargado exitosamente', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    } catch (error) {
+      console.error('Error al exportar productos:', error);
+      toast.error('Error al descargar el archivo Excel', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
     }
   };
 
@@ -69,13 +108,25 @@ const Header = ({ user, handleLogout, cartItemsCount = 0 }) => {
               </div>
             </NavLink>
           ) : (
+            <div className="d-none d-md-flex align-items-center ms-3">
+              <NavLink 
+                className="text-white"
+                onClick={() => navigate('/login')}
+                style={{ cursor: 'pointer', textDecoration: 'none', padding: '0.25rem 0.5rem' }}
+              >
+                <FontAwesomeIcon icon={faSignInAlt} className="me-2" />
+                Iniciar sesión
+              </NavLink>
+            </div>
+          )}
+          {user?.rol === 'admin' && (
             <NavLink 
               className="d-none d-md-flex align-items-center ms-3 text-white"
-              onClick={() => navigate('/login')}
+              onClick={handleExportProductos}
               style={{ cursor: 'pointer', textDecoration: 'none', padding: '0.25rem 0.5rem' }}
             >
-              <FontAwesomeIcon icon={faSignInAlt} className="me-2" />
-              Iniciar sesión
+              <FontAwesomeIcon icon={faFileExcel} className="me-2" />
+              Exportar a Excel
             </NavLink>
           )}
         </Navbar.Brand>
@@ -128,6 +179,12 @@ const Header = ({ user, handleLogout, cartItemsCount = 0 }) => {
                   <Dropdown.Item onClick={handleProfileClick}>
                     Ver perfil
                   </Dropdown.Item>
+                  {user?.rol === 'admin' && (
+                    <Dropdown.Item onClick={handleExportProductos}>
+                      <FontAwesomeIcon icon={faFileExcel} className="me-2" />
+                      Exportar a Excel
+                    </Dropdown.Item>
+                  )}
                 </Dropdown.Menu>
               </Dropdown>
             ) : (
