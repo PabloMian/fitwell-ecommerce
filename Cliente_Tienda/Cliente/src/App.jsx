@@ -16,7 +16,7 @@ import Equipos from "./pages/vista_equipos";
 import Prendas from "./pages/vista_prendas";
 import Suplementos from "./pages/vista_suplementos";
 import Pago from "./pages/vista_pago";
-import Pedidos from "./pages/pedidos";  // Importa el archivo correcto
+import Pedidos from "./pages/pedidos";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -28,10 +28,10 @@ const App = () => {
   const [cartItemsCount, setCartItemsCount] = useState(0);
 
   useEffect(() => {
-    const checkAuth = () => {
+    const checkAuth = async () => {
       const token = localStorage.getItem('token');
       const storedUser = localStorage.getItem('user');
-      
+
       if (!token || !storedUser) {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
@@ -41,7 +41,13 @@ const App = () => {
 
       try {
         const parsedUser = JSON.parse(storedUser);
-        setUser(parsedUser);
+        if (parsedUser && parsedUser.email) { // Valida que el usuario tenga datos básicos
+          setUser(parsedUser);
+        } else {
+          console.warn('User data invalid, clearing storage');
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+        }
       } catch (error) {
         console.error("Error parsing user data:", error);
         localStorage.removeItem('token');
@@ -89,27 +95,48 @@ const App = () => {
           <Container>
             <Routes>
               {/* Rutas públicas */}
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login setUser={setUser} />} />
-              <Route path="/registro" element={user ? <Navigate to="/" replace /> : <Registro setUser={setUser} />} />
+              <Route path="/" element={<Home user={user} />} /> {/* Pasa user como prop */}
+              <Route 
+                path="/login" 
+                element={user ? <Navigate to="/" replace /> : <Login setUser={setUser} />} 
+              />
+              <Route 
+                path="/registro" 
+                element={user ? <Navigate to="/" replace /> : <Registro setUser={setUser} />} 
+              />
               <Route path="/equipos" element={<Equipos />} />
               <Route path="/prendas" element={<Prendas />} />
               <Route path="/suplementos" element={<Suplementos />} />
-              <Route path="/pedidos" element={<Pedidos />} />  {/* Ruta pública para pedidos */}
+              <Route path="/pedidos" element={<Pedidos />} />
 
               {/* Rutas protegidas */}
-              <Route path="/newproduct" element={
-                user?.rol === 'admin' ? <FormPage /> : <Navigate to="/" replace />
-              } />
-              <Route path="/updateproduct" element={
-                user?.rol === 'admin' ? <EditarProducto /> : <Navigate to="/" replace />
-              } />
-              <Route path="/deleteproduct" element={
-                user?.rol === 'admin' ? <EliminarProducto /> : <Navigate to="/" replace />
-              } />
+              <Route
+                path="/newproduct"
+                element={
+                  user?.rol === 'admin' ? <FormPage /> : <Navigate to="/" replace />
+                }
+              />
+              <Route
+                path="/updateproduct"
+                element={
+                  user?.rol === 'admin' ? <EditarProducto /> : <Navigate to="/" replace />
+                }
+              />
+              <Route
+                path="/deleteproduct"
+                element={
+                  user?.rol === 'admin' ? <EliminarProducto /> : <Navigate to="/" replace />
+                }
+              />
 
-              <Route path="/carrito" element={user ? <Carrito /> : <Navigate to="/login" replace />} />
-              <Route path="/pago" element={user ? <Pago /> : <Navigate to="/login" replace />} />
+              <Route
+                path="/carrito"
+                element={user ? <Carrito /> : <Navigate to="/login" replace />}
+              />
+              <Route
+                path="/pago"
+                element={user ? <Pago /> : <Navigate to="/login" replace />}
+              />
 
               {/* Ruta por defecto */}
               <Route path="*" element={<Navigate to="/" replace />} />
