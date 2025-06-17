@@ -17,6 +17,7 @@ import Prendas from "./pages/vista_prendas";
 import Suplementos from "./pages/vista_suplementos";
 import Pago from "./pages/vista_pago";
 import Pedidos from "./pages/pedidos";
+import Perfil from "./pages/perfil";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -41,7 +42,7 @@ const App = () => {
 
       try {
         const parsedUser = JSON.parse(storedUser);
-        if (parsedUser && parsedUser.email) { // Valida que el usuario tenga datos básicos
+        if (parsedUser && parsedUser.email) {
           setUser(parsedUser);
         } else {
           console.warn('User data invalid, clearing storage');
@@ -95,7 +96,7 @@ const App = () => {
           <Container>
             <Routes>
               {/* Rutas públicas */}
-              <Route path="/" element={<Home user={user} />} /> {/* Pasa user como prop */}
+              <Route path="/" element={<Home user={user} />} />
               <Route 
                 path="/login" 
                 element={user ? <Navigate to="/" replace /> : <Login setUser={setUser} />} 
@@ -117,6 +118,10 @@ const App = () => {
                 }
               />
               <Route
+                path="/perfil"
+                element={user ? <Perfil user={user} /> : <Navigate to="/login" replace />}
+              />
+              <Route
                 path="/updateproduct"
                 element={
                   user?.rol === 'admin' ? <EditarProducto /> : <Navigate to="/" replace />
@@ -128,7 +133,6 @@ const App = () => {
                   user?.rol === 'admin' ? <EliminarProducto /> : <Navigate to="/" replace />
                 }
               />
-
               <Route
                 path="/carrito"
                 element={user ? <Carrito /> : <Navigate to="/login" replace />}
