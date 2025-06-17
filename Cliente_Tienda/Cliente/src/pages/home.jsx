@@ -29,7 +29,7 @@ const carruselImages = [img1, img2, img3, img4, img5, img6, img7];
 
 const defaultImage = "https://placehold.co/600x400?text=Imagen+No+Disponible";
 
-const Home = () => {
+const Home = ({ user }) => {
   const [productos, setProductos] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -41,11 +41,13 @@ const Home = () => {
   useEffect(() => {
     const fetchProductos = async () => {
       try {
-        const response = await axios.get("http://localhost:3005/api/productos");
+        const token = localStorage.getItem('token') || ''; // Usa un token vacío si no está presente
+        const response = await axios.get("http://localhost:3005/api/productos", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
 
         const productosProcesados = response.data.map((producto) => {
           let imagenUrl = defaultImage;
-
           if (producto.imagen) {
             if (producto.imagen.startsWith("http")) {
               imagenUrl = producto.imagen;
@@ -53,13 +55,8 @@ const Home = () => {
               imagenUrl = `http://localhost:3005/imagenes/${producto.imagen}`;
             }
           }
-
-          return {
-            ...producto,
-            imagen: imagenUrl,
-          };
+          return { ...producto, imagen: imagenUrl };
         });
-
         setProductos(productosProcesados);
       } catch (error) {
         console.error("Error al cargar productos:", error);
@@ -72,6 +69,22 @@ const Home = () => {
     fetchProductos();
   }, []);
 
+  // Eliminamos el useEffect que verifica localStorage, ya que user viene como prop
+  // Si necesitas fallback, puedes usar localStorage como respaldo
+  const getUserFallback = () => {
+    if (!user && localStorage.getItem('user')) {
+      try {
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        return storedUser || null;
+      } catch (e) {
+        console.error("Error parsing stored user:", e);
+        localStorage.removeItem('user');
+        return null;
+      }
+    }
+    return user;
+  };
+
   const filtrarPorCategoria = (categoriaId, cantidad) => {
     return productos
       .filter((producto) => producto.categoria_id === categoriaId)
@@ -83,9 +96,9 @@ const Home = () => {
     const index = carritoExistente.findIndex((p) => p.id === producto.id);
 
     if (index !== -1) {
-      carritoExistente[index].cantidad += 1; // Aumentar cantidad
+      carritoExistente[index].cantidad += 1;
     } else {
-      producto.cantidad = 1; // Establecer cantidad inicial
+      producto.cantidad = 1;
       carritoExistente.push(producto);
     }
 
@@ -119,9 +132,11 @@ const Home = () => {
     );
   }
 
+  const currentUser = getUserFallback(); // Usa el usuario de prop o fallback
+
   return (
     <Container className="mt-4">
-      <h2 className="text-center mb-4">Bienvenido a FitWell</h2>
+      <h2 className="text-center mb-4">Bienvenido a FitWell {currentUser ? `, ${currentUser.nombre}` : ''}</h2>
 
       <Carousel className="mb-5">
         {carruselImages.map((img, index) => (

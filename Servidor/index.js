@@ -7,7 +7,8 @@ import { fileURLToPath } from "url";
 // Importación de rutas
 import productosRoutes from "./routes/productos.js";
 import usuariosRoutes from "./routes/usuarios.js";
-import pedidosRoutes from "./routes/pedidos.js"; // Rutas de pedidos
+import pedidosRoutes from "./routes/pedidos.js";
+import authRoutes from "./routes/auth.js"; // Asegúrate de importar auth.js
 
 // Configuración
 dotenv.config();
@@ -18,7 +19,7 @@ const app = express();
 
 // Configuración CORS
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000'], // Frontends permitidos
+  origin: ['http://localhost:5173', 'http://localhost:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -37,7 +38,8 @@ app.get("/api", (req, res) => {
 // Configuración de rutas
 app.use("/api/productos", productosRoutes);
 app.use("/api/auth", usuariosRoutes);
-app.use("/api/pedidos", pedidosRoutes); // Ruta para pedidos
+app.use("/api/auth", authRoutes); // Monta auth.js
+app.use("/api/pedidos", pedidosRoutes);
 
 // Manejo de errores
 app.use((req, res) => {
@@ -57,6 +59,7 @@ app.listen(PORT, () => {
   Rutas disponibles:
   - POST   http://localhost:${PORT}/api/auth/registro
   - POST   http://localhost:${PORT}/api/auth/login
+  - POST   http://localhost:${PORT}/api/auth/google  // Nueva ruta
   - GET    http://localhost:${PORT}/api/pedidos/:usuario_id
   - POST   http://localhost:${PORT}/api/pedidos
   `);
