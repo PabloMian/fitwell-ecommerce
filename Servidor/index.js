@@ -41,18 +41,15 @@ app.get("/api", (req, res) => {
 // Endpoint para exportar productos a Excel
 app.get("/api/exportar-productos", async (req, res) => {
     try {
-        // Usar el pool de conexiones, sin unión con categorias
         const [rows] = await pool.execute(`
             SELECT id, nombre, descripcion, precio, stock, 
                    categoria_id AS categoria, imagen, destacado, created_at
             FROM productos
         `);
 
-        // Crear workbook de Excel
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('Productos');
 
-        // Definir columnas
         worksheet.columns = [
             { header: 'ID', key: 'id', width: 10 },
             { header: 'Nombre', key: 'nombre', width: 30 },
@@ -65,7 +62,6 @@ app.get("/api/exportar-productos", async (req, res) => {
             { header: 'Creado', key: 'created_at', width: 20 }
         ];
 
-        // Estilo para encabezados
         worksheet.getRow(1).font = { bold: true };
         worksheet.getRow(1).fill = {
             type: 'pattern',
@@ -74,7 +70,6 @@ app.get("/api/exportar-productos", async (req, res) => {
         };
         worksheet.getRow(1).font = { color: { argb: 'FFFFFFFF' } };
 
-        // Agregar datos
         rows.forEach(row => {
             worksheet.addRow({
                 id: row.id,
@@ -89,14 +84,11 @@ app.get("/api/exportar-productos", async (req, res) => {
             });
         });
 
-        // Configurar respuesta para descargar
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         res.setHeader('Content-Disposition', 'attachment; filename=productos.xlsx');
 
-        // Escribir y enviar el archivo
         await workbook.xlsx.write(res);
         res.end();
-
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'Error al exportar productos' });
@@ -126,9 +118,10 @@ app.listen(PORT, () => {
     🚀 Servidor activo en: http://localhost:${PORT}
     Rutas disponibles:
     - POST   http://localhost:${PORT}/api/auth/google
+    - POST   http://localhost:${PORT}/api/auth/registro
     - GET    http://localhost:${PORT}/api/productos
     - GET    http://localhost:${PORT}/api/exportar-productos
     - GET    http://localhost:${PORT}/api/pedidos/:usuario_id
     - POST   http://localhost:${PORT}/api/pedidos
     `);
-}); 
+});
