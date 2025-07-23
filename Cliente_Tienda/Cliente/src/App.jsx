@@ -18,6 +18,7 @@ import Suplementos from "./pages/vista_suplementos";
 import Pago from "./pages/vista_pago";
 import Pedidos from "./pages/pedidos";
 import Perfil from "./pages/perfil";
+import Rutinas from "./pages/rutinas";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -109,6 +110,7 @@ const App = () => {
               <Route path="/prendas" element={<Prendas />} />
               <Route path="/suplementos" element={<Suplementos />} />
               <Route path="/pedidos" element={<Pedidos />} />
+              <Route path="/rutinas" element={<Rutinas />} />
 
               {/* Rutas protegidas */}
               <Route
@@ -141,6 +143,7 @@ const App = () => {
                 path="/pago"
                 element={user ? <Pago /> : <Navigate to="/login" replace />}
               />
+              
 
               {/* Ruta por defecto */}
               <Route path="*" element={<Navigate to="/" replace />} />
