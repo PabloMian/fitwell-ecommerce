@@ -9,23 +9,24 @@ import {
   Modal,
   Alert,
   Spinner,
-  Toast,
-  ToastContainer,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "../css/productos.css";
 
-// Importar imágenes del carrusel
-import img1 from "../components/images/carrusel1.webp";
-import img2 from "../components/images/carrusel2.webp";
-import img3 from "../components/images/carrusel3.webp";
-import img4 from "../components/images/carrusel4.webp";
-import img5 from "../components/images/carrusel5.webp";
-import img6 from "../components/images/carrusel6.webp";
-import img7 from "../components/images/carrusel7.webp";
+// Imágenes del carrusel desde Cloudinary (Usando la última versión de cada public_id)
+const carruselImages = [
+  "https://res.cloudinary.com/ddps7gqvl/image/upload/v1710000000/carrusel1_nyckoy.webp",
+  "https://res.cloudinary.com/ddps7gqvl/image/upload/v1710000000/carrusel2_n0vsze.webp",
+  "https://res.cloudinary.com/ddps7gqvl/image/upload/v1710000000/carrusel3_vj3lvq.webp",
+  "https://res.cloudinary.com/ddps7gqvl/image/upload/v1710000000/carrusel4_ziknuu.webp",
+  "https://res.cloudinary.com/ddps7gqvl/image/upload/v1710000000/carrusel5_pwr7sf.webp",
+  "https://res.cloudinary.com/ddps7gqvl/image/upload/v1710000000/carrusel6_zwzzdr.webp",
+  "https://res.cloudinary.com/ddps7gqvl/image/upload/v1710000000/carrusel7_irirpp.webp",
+];
 
-const carruselImages = [img1, img2, img3, img4, img5, img6, img7];
 
 const defaultImage = "https://placehold.co/600x400?text=Imagen+No+Disponible";
 
@@ -34,29 +35,21 @@ const Home = ({ user }) => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProductos = async () => {
       try {
-        const token = localStorage.getItem('token') || ''; // Usa un token vacío si no está presente
+        const token = localStorage.getItem("token") || "";
         const response = await axios.get("http://localhost:3005/api/productos", {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
 
-        const productosProcesados = response.data.map((producto) => {
-          let imagenUrl = defaultImage;
-          if (producto.imagen) {
-            if (producto.imagen.startsWith("http")) {
-              imagenUrl = producto.imagen;
-            } else {
-              imagenUrl = `http://localhost:3005/imagenes/${producto.imagen}`;
-            }
-          }
-          return { ...producto, imagen: imagenUrl };
-        });
+        const productosProcesados = response.data.map((producto) => ({
+          ...producto,
+          imagen: producto.imagen || defaultImage,
+        }));
+
         setProductos(productosProcesados);
       } catch (error) {
         console.error("Error al cargar productos:", error);
@@ -69,16 +62,14 @@ const Home = ({ user }) => {
     fetchProductos();
   }, []);
 
-  // Eliminamos el useEffect que verifica localStorage, ya que user viene como prop
-  // Si necesitas fallback, puedes usar localStorage como respaldo
   const getUserFallback = () => {
-    if (!user && localStorage.getItem('user')) {
+    if (!user && localStorage.getItem("user")) {
       try {
-        const storedUser = JSON.parse(localStorage.getItem('user'));
+        const storedUser = JSON.parse(localStorage.getItem("user"));
         return storedUser || null;
       } catch (e) {
         console.error("Error parsing stored user:", e);
-        localStorage.removeItem('user');
+        localStorage.removeItem("user");
         return null;
       }
     }
@@ -103,10 +94,14 @@ const Home = ({ user }) => {
     }
 
     localStorage.setItem("cart", JSON.stringify(carritoExistente));
-    setToastMessage(`"${producto.nombre}" añadido al carrito.`);
-    setShowToast(true);
+    toast.success(`"${producto.nombre}" añadido al carrito.`, {
+      position: "bottom-right",
+      autoClose: 3000,
+    });
     setSelectedProduct(null);
   };
+
+  const currentUser = getUserFallback();
 
   if (loading) {
     return (
@@ -132,11 +127,11 @@ const Home = ({ user }) => {
     );
   }
 
-  const currentUser = getUserFallback(); // Usa el usuario de prop o fallback
-
   return (
     <Container className="mt-4">
-      <h2 className="text-center mb-4">Bienvenido a FitWell {currentUser ? `, ${currentUser.nombre}` : ''}</h2>
+      <h2 className="text-center mb-4">
+        Bienvenido a FitWell{currentUser ? `, ${currentUser.nombre}` : ""}
+      </h2>
 
       <Carousel className="mb-5">
         {carruselImages.map((img, index) => (
@@ -146,7 +141,11 @@ const Home = ({ user }) => {
               src={img}
               alt={`Slide ${index + 1}`}
               style={{ height: "400px", objectFit: "cover" }}
-              onError={(e) => (e.target.src = defaultImage)}
+              onError={(e) => {
+                e.target.src = defaultImage;
+                e.target.onerror = null;
+                console.error("Error al cargar imagen del carrusel. URL fallida:", img);
+              }}
             />
           </Carousel.Item>
         ))}
@@ -188,7 +187,6 @@ const Home = ({ user }) => {
           </Row>
           <div className="text-center mt-3">
             <Button
-              variant="primary"
               className="btn-ver-mas"
               onClick={() => navigate(categoria.ruta)}
             >
@@ -198,7 +196,6 @@ const Home = ({ user }) => {
         </div>
       ))}
 
-      {/* Modal de detalle */}
       <Modal
         show={!!selectedProduct}
         onHide={() => setSelectedProduct(null)}
@@ -225,9 +222,7 @@ const Home = ({ user }) => {
             <Col md={6}>
               <h4>Detalles</h4>
               <p>{selectedProduct?.descripcion || "No hay descripción disponible."}</p>
-              <h5 className="text-primary">
-                Precio: ${selectedProduct?.precio}
-              </h5>
+              <h5 className="text-primary">Precio: ${selectedProduct?.precio}</h5>
               <Button
                 variant="primary"
                 className="mt-3 btn-custom"
@@ -241,21 +236,7 @@ const Home = ({ user }) => {
         </Modal.Body>
       </Modal>
 
-      {/* Toast de confirmación */}
-      <ToastContainer position="bottom-end" className="p-3">
-        <Toast
-          show={showToast}
-          onClose={() => setShowToast(false)}
-          delay={3000}
-          autohide
-          bg="success"
-        >
-          <Toast.Header>
-            <strong className="me-auto">Carrito</strong>
-          </Toast.Header>
-          <Toast.Body className="text-white">{toastMessage}</Toast.Body>
-        </Toast>
-      </ToastContainer>
+      <ToastContainer />
     </Container>
   );
 };

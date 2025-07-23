@@ -1,0 +1,393 @@
+/* VARIABLES CSS PARA CONSISTENCIA */
+:root {
+  --primary-color: #ec5c04;
+  --primary-gradient: linear-gradient(135deg, #ec5c04, #ff7b2e);
+  --secondary-color: #2e2e2e;
+  --text-color: #333;
+  --text-light: #4a4a4a;
+  --background-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.15);
+  --shadow-hover: 0 12px 32px rgba(236, 92, 4, 0.2);
+  --border-radius: 1.2rem;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* LANDING DE PRESENTACIÓN */
+.landing-wrapper {
+  height: 100vh;
+  background: var(--background-gradient);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.landing-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(236, 92, 4, 0.05) 0%, transparent 70%);
+  animation: float 6s ease-in-out infinite;
+  z-index: 0;
+}
+
+.landing-title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  background: var(--primary-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 1;
+  animation: slideInLeft 1s ease-out 0.3s both;
+}
+
+.landing-subtitle {
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  color: var(--text-light);
+  font-weight: 500;
+  position: relative;
+  z-index: 1;
+  animation: slideInRight 1s ease-out 0.6s both;
+}
+
+/* SECCIÓN PRINCIPAL */
+.rutina-wrapper {
+  padding: 6rem 2rem;
+  background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+  position: relative;
+}
+
+.rutina-heading {
+  text-align: center;
+  margin-bottom: 4rem;
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--secondary-color);
+  font-weight: 700;
+  position: relative;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.rutina-heading::after {
+  content: '';
+  position: absolute;
+  bottom: -1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: var(--primary-gradient);
+  border-radius: 2px;
+}
+
+.rutina-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.rutina-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3rem;
+  flex-wrap: wrap;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-light);
+  transition: var(--transition);
+  opacity: 0;
+  animation: slideInFromLeft 1s ease-out forwards;
+}
+
+.rutina-item:nth-child(even) {
+  animation: slideInFromRight 1s ease-out forwards;
+}
+
+.rutina-item:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.row-normal {
+  flex-direction: row;
+}
+
+.row-reverse {
+  flex-direction: row-reverse;
+}
+
+.rutina-text {
+  flex: 1;
+  min-width: 300px;
+  padding: 1.5rem;
+}
+
+.rutina-text h3 {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  background: var(--primary-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  position: relative;
+}
+
+.rutina-text h3::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -0.5rem;
+  width: 40px;
+  height: 3px;
+  background: var(--primary-gradient);
+  border-radius: 2px;
+  transform: scaleX(0);
+  animation: scaleIn 0.6s ease-out 0.8s both;
+}
+
+.rutina-text p {
+  color: var(--text-color);
+  font-size: 1.1rem;
+  line-height: 1.8;
+  font-weight: 400;
+  text-align: justify;
+}
+
+.rutina-video-container {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  justify-content: center;
+}
+
+.rutina-video {
+  width: 100%;
+  max-width: 350px;
+  aspect-ratio: 9 / 16;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-medium);
+  transition: var(--transition);
+  overflow: hidden;
+  position: relative;
+}
+
+.rutina-video::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(236, 92, 4, 0.1) 0%, transparent 50%);
+  opacity: 0;
+  transition: var(--transition);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.rutina-video:hover {
+  transform: scale(1.02) rotateY(2deg);
+  box-shadow: var(--shadow-hover);
+}
+
+.rutina-video:hover::before {
+  opacity: 1;
+}
+
+/* ANIMACIONES MEJORADAS */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-100px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(100px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes scaleInVideo {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+  }
+}
+
+/* RESPONSIVE DESIGN MEJORADO */
+@media (max-width: 768px) {
+  .rutina-wrapper {
+    padding: 4rem 1rem;
+  }
+  
+  .rutina-container {
+    gap: 4rem;
+  }
+  
+  .rutina-item {
+    gap: 2rem;
+    padding: 1.5rem;
+    flex-direction: column !important;
+    text-align: center;
+  }
+  
+  .row-reverse {
+    flex-direction: column-reverse !important;
+  }
+  
+  .rutina-text {
+    min-width: unset;
+    padding: 1rem;
+  }
+  
+  .rutina-video-container {
+    min-width: unset;
+  }
+  
+  .rutina-video {
+    max-width: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .landing-wrapper {
+    padding: 2rem 1rem;
+  }
+  
+  .rutina-wrapper {
+    padding: 3rem 1rem;
+  }
+  
+  .rutina-container {
+    gap: 3rem;
+  }
+  
+  .rutina-item {
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+}
+
+/* EFECTOS ADICIONALES PARA INTERACTIVIDAD */
+.rutina-item:nth-child(1) {
+  animation-delay: 0.2s;
+}
+
+.rutina-item:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.rutina-item:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+.rutina-item:nth-child(4) {
+  animation-delay: 0.8s;
+}
+
+.rutina-item:nth-child(5) {
+  animation-delay: 1s;
+}
+
+.rutina-item:nth-child(6) {
+  animation-delay: 1.2s;
+}
+
+.rutina-item:nth-child(7) {
+  animation-delay: 1.4s;
+}
+
+.rutina-item:nth-child(8) {
+  animation-delay: 1.6s;
+}
+
+/* MEJORA PARA ACCESIBILIDAD */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
