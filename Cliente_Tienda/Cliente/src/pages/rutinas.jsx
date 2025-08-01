@@ -1,49 +1,33 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 import "../css/rutinas.css";
-
-const videoTutorials = [
-  {
-    muscle: "Pecho",
-    videoUrl: "https://res.cloudinary.com/ddps7gqvl/video/upload/v1710000000/rutina_espalda_mbznr3.mp4",
-    description: "Ejercita el pecho para mejorar fuerza en el tren superior y postura.",
-  },
-  {
-    muscle: "Hombros",
-    videoUrl: "https://res.cloudinary.com/ddps7gqvl/video/upload/v1710000000/rutina_hombros_glwb3d.mp4",
-    description: "Trabaja los deltoides para ganar estabilidad y amplitud en tus movimientos.",
-  },
-  {
-    muscle: "Tríceps",
-    videoUrl: "https://res.cloudinary.com/ddps7gqvl/video/upload/v1710000000/rutina_triceps_gdhmhr.mp4",
-    description: "Los tríceps son esenciales para la fuerza de empuje y definición del brazo.",
-  },
-  {
-    muscle: "Espalda",
-    videoUrl: "https://res.cloudinary.com/ddps7gqvl/video/upload/v1710000000/rutina_espalda_piqjlh.mp4",
-    description: "Fortalecer la espalda mejora tu postura y reduce el riesgo de lesiones.",
-  },
-  {
-    muscle: "Bíceps",
-    videoUrl: "https://res.cloudinary.com/ddps7gqvl/video/upload/v1710000000/rutina_biceps_krb2fw.mp4",
-    description: "Define tus brazos y mejora tu capacidad de tracción con esta rutina.",
-  },
-  {
-    muscle: "Glúteos",
-    videoUrl: "https://res.cloudinary.com/ddps7gqvl/video/upload/v1710000000/rutina_gluteos_bmr5wf.mp4",
-    description: "Activa y tonifica los glúteos para estabilidad, postura y fuerza general.",
-  },
-];
 
 const defaultVideo = "https://res.cloudinary.com/ddps7gqvl/video/upload/v1710000000/default_video.mp4";
 
 const Rutinas = ({ user }) => {
+  const [rutinas, setRutinas] = useState([]);
   const [error, setError] = useState(null);
   const [showLanding, setShowLanding] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowLanding(false), 2500);
+    fetchRutinas();
     return () => clearTimeout(timer);
   }, []);
+
+  const fetchRutinas = async () => {
+    try {
+      const token = localStorage.getItem("token") || "";
+      const response = await axios.get("http://localhost:3005/api/rutinas", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setRutinas(response.data);
+    } catch (error) {
+      console.error("Error al cargar rutinas:", error);
+      setError("Error al cargar las rutinas. Intenta recargar la página.");
+    }
+  };
 
   if (showLanding) {
     return (
@@ -67,12 +51,13 @@ const Rutinas = ({ user }) => {
       )}
 
       <div className="rutina-container">
-        {videoTutorials.map((tutorial, index) => {
+        {rutinas.map((tutorial, index) => {
           const isEven = index % 2 === 0;
+          const isDynamic = isEven; // Videos en índices pares son dinámicos
           return (
             <div
               className={`rutina-item ${isEven ? "row-normal" : "row-reverse"}`}
-              key={index}
+              key={tutorial.id}
             >
               <div className="rutina-text">
                 <h3>{tutorial.muscle}</h3>
@@ -81,17 +66,23 @@ const Rutinas = ({ user }) => {
               <div className="rutina-video-container">
                 <video
                   className="rutina-video"
-                  controls
+                  controls={!isDynamic} // Solo controles para videos no dinámicos
                   playsInline
                   preload="metadata"
+                  autoPlay={isDynamic}
+                  muted={isDynamic}
+                  loop={isDynamic}
                   onError={(e) => {
                     e.target.src = defaultVideo;
                     e.target.onerror = null;
+                    e.target.autoPlay = false; // Desactivar autoPlay en video por defecto
+                    e.target.muted = false;
+                    e.target.loop = false;
                     setError(`Error al cargar el video de ${tutorial.muscle}. Usando video predeterminado.`);
-                    console.error(`Error al cargar video de ${tutorial.muscle}. URL fallida:`, tutorial.videoUrl);
+                    console.error(`Error al cargar video de ${tutorial.muscle}. URL fallida:`, tutorial.video_url);
                   }}
                 >
-                  <source src={tutorial.videoUrl} type="video/mp4" />
+                  <source src={tutorial.video_url} type="video/mp4" />
                   Tu navegador no soporta el elemento de video.
                 </video>
               </div>

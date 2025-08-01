@@ -14,9 +14,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "../css/productos.css";
+import "../css/productos.css"; // Estilos de las cards
+import "../css/home.css"; // Nuevo archivo de estilos para el home
 
-// Imágenes del carrusel desde Cloudinary (Usando la última versión de cada public_id)
 const carruselImages = [
   "https://res.cloudinary.com/ddps7gqvl/image/upload/v1710000000/carrusel1_nyckoy.webp",
   "https://res.cloudinary.com/ddps7gqvl/image/upload/v1710000000/carrusel2_n0vsze.webp",
@@ -26,7 +26,6 @@ const carruselImages = [
   "https://res.cloudinary.com/ddps7gqvl/image/upload/v1710000000/carrusel6_zwzzdr.webp",
   "https://res.cloudinary.com/ddps7gqvl/image/upload/v1710000000/carrusel7_irirpp.webp",
 ];
-
 
 const defaultImage = "https://placehold.co/600x400?text=Imagen+No+Disponible";
 
@@ -129,22 +128,20 @@ const Home = ({ user }) => {
 
   return (
     <Container className="mt-4">
-      <h2 className="text-center mb-4">
+      <h2 className="titulo-home">
         Bienvenido a FitWell{currentUser ? `, ${currentUser.nombre}` : ""}
       </h2>
 
-      <Carousel className="mb-5">
+      <Carousel className="mb-5 carrusel-home">
         {carruselImages.map((img, index) => (
           <Carousel.Item key={index}>
             <img
-              className="d-block w-100 rounded"
+              className="d-block w-100 rounded imagen-carrusel"
               src={img}
               alt={`Slide ${index + 1}`}
-              style={{ height: "400px", objectFit: "cover" }}
               onError={(e) => {
                 e.target.src = defaultImage;
                 e.target.onerror = null;
-                console.error("Error al cargar imagen del carrusel. URL fallida:", img);
               }}
             />
           </Carousel.Item>
@@ -157,7 +154,7 @@ const Home = ({ user }) => {
         { id: 3, nombre: "Suplementos", ruta: "/suplementos" },
       ].map((categoria) => (
         <div key={categoria.id} className="mb-5">
-          <h3 className="mb-4">{categoria.nombre}</h3>
+          <h3 className="seccion-titulo">{categoria.nombre}</h3>
           <Row>
             {filtrarPorCategoria(categoria.id, 6).map((producto) => (
               <Col lg={4} md={6} key={producto.id} className="mb-4">
@@ -178,7 +175,7 @@ const Home = ({ user }) => {
                   <Card.Body className="card-body-custom">
                     <Card.Title>{producto.nombre}</Card.Title>
                     <div className="card-footer">
-                      <strong>Precio:</strong> ${producto.precio}
+                      <strong>${producto.precio}</strong>
                     </div>
                   </Card.Body>
                 </Card>
@@ -211,8 +208,7 @@ const Home = ({ user }) => {
               <img
                 src={selectedProduct?.imagen || defaultImage}
                 alt={selectedProduct?.nombre}
-                className="img-fluid rounded mb-3"
-                style={{ maxHeight: "400px", objectFit: "contain" }}
+                className="img-fluid rounded mb-3 modal-imagen"
                 onError={(e) => {
                   e.target.src = defaultImage;
                   e.target.onerror = null;

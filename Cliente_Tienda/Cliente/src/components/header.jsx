@@ -1,4 +1,3 @@
-// header.jsx
 import { Navbar, Container, Nav, Badge, Dropdown, NavLink } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,7 +9,7 @@ import {
   faSignInAlt,
   faBox,
   faFileExcel,
-  faDumbbell, // Agregado para el ícono de rutinas
+  faDumbbell,
 } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -153,22 +152,41 @@ const Header = ({ user, handleLogout, cartItemsCount = 0 }) => {
             </Nav.Link>
 
             {user?.rol === "admin" && (
-              <Dropdown className="me-2">
-                <Dropdown.Toggle variant="outline-light" id="admin-dropdown">
-                  Opciones de producto
-                </Dropdown.Toggle>
-                <Dropdown.Menu className="dropdown-menu-dark">
-                  <Dropdown.Item onClick={() => navigate("/newproduct")}>
-                    Nuevo producto
-                  </Dropdown.Item>
-                  <Dropdown.Item onClick={() => navigate("/updateproduct")}>
-                    Actualizar producto
-                  </Dropdown.Item>
-                  <Dropdown.Item onClick={() => navigate("/deleteproduct")}>
-                    Eliminar producto
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
+              <>
+                <Dropdown className="me-2">
+                  <Dropdown.Toggle variant="outline-light" id="product-dropdown">
+                    Opciones de producto
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu className="dropdown-menu-dark">
+                    <Dropdown.Item onClick={() => navigate("/newproduct")}>
+                      Nuevo producto
+                    </Dropdown.Item>
+                    <Dropdown.Item onClick={() => navigate("/updateproduct")}>
+                      Actualizar producto
+                    </Dropdown.Item>
+                    <Dropdown.Item onClick={() => navigate("/deleteproduct")}>
+                      Eliminar producto
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+
+                <Dropdown className="me-2">
+                  <Dropdown.Toggle variant="outline-light" id="rutinas-dropdown">
+                    Opciones de rutinas
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu className="dropdown-menu-dark">
+                    <Dropdown.Item onClick={() => navigate("/rutinas/nueva")}>
+                      Nueva rutina
+                    </Dropdown.Item>
+                    <Dropdown.Item onClick={() => navigate("/rutinas/editar")}>
+                      Actualizar rutina
+                    </Dropdown.Item>
+                    <Dropdown.Item onClick={() => navigate("/rutinas/eliminar")}>
+                      Eliminar rutina
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              </>
             )}
 
             {user && (
@@ -197,10 +215,30 @@ const Header = ({ user, handleLogout, cartItemsCount = 0 }) => {
                     Ver perfil
                   </Dropdown.Item>
                   {user?.rol === "admin" && (
-                    <Dropdown.Item onClick={handleExportProductos}>
-                      <FontAwesomeIcon icon={faFileExcel} className="me-2" />
-                      Exportar a Excel
-                    </Dropdown.Item>
+                    <>
+                      <Dropdown.Item onClick={handleExportProductos}>
+                        <FontAwesomeIcon icon={faFileExcel} className="me-2" />
+                        Exportar a Excel
+                      </Dropdown.Item>
+                      <Dropdown.Item onClick={() => navigate("/newproduct")}>
+                        Nuevo producto
+                      </Dropdown.Item>
+                      <Dropdown.Item onClick={() => navigate("/updateproduct")}>
+                        Actualizar producto
+                      </Dropdown.Item>
+                      <Dropdown.Item onClick={() => navigate("/deleteproduct")}>
+                        Eliminar producto
+                      </Dropdown.Item>
+                      <Dropdown.Item onClick={() => navigate("/rutinas/nueva")}>
+                        Nueva rutina
+                      </Dropdown.Item>
+                      <Dropdown.Item onClick={() => navigate("/rutinas/editar")}>
+                        Actualizar rutina
+                      </Dropdown.Item>
+                      <Dropdown.Item onClick={() => navigate("/rutinas/eliminar")}>
+                        Eliminar rutina
+                      </Dropdown.Item>
+                    </>
                   )}
                 </Dropdown.Menu>
               </Dropdown>

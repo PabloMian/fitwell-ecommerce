@@ -19,6 +19,9 @@ import Pago from "./pages/vista_pago";
 import Pedidos from "./pages/pedidos";
 import Perfil from "./pages/perfil";
 import Rutinas from "./pages/rutinas";
+import NuevaRutina from "./pages/nueva_rutina";
+import EditarRutina from "./pages/editar_rutina";
+import EliminarRutina from "./pages/eliminar_rutina";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -110,13 +113,13 @@ const App = () => {
               <Route path="/prendas" element={<Prendas />} />
               <Route path="/suplementos" element={<Suplementos />} />
               <Route path="/pedidos" element={<Pedidos />} />
-              <Route path="/rutinas" element={<Rutinas />} />
+              <Route path="/rutinas" element={<Rutinas user={user} />} />
 
               {/* Rutas protegidas */}
               <Route
                 path="/newproduct"
                 element={
-                  user?.rol === 'admin' ? <FormPage /> : <Navigate to="/" replace />
+                  user?.rol === 'admin' ? <FormPage user={user} /> : <Navigate to="/" replace />
                 }
               />
               <Route
@@ -126,13 +129,13 @@ const App = () => {
               <Route
                 path="/updateproduct"
                 element={
-                  user?.rol === 'admin' ? <EditarProducto /> : <Navigate to="/" replace />
+                  user?.rol === 'admin' ? <EditarProducto user={user} /> : <Navigate to="/" replace />
                 }
               />
               <Route
                 path="/deleteproduct"
                 element={
-                  user?.rol === 'admin' ? <EliminarProducto /> : <Navigate to="/" replace />
+                  user?.rol === 'admin' ? <EliminarProducto user={user} /> : <Navigate to="/" replace />
                 }
               />
               <Route
@@ -143,7 +146,24 @@ const App = () => {
                 path="/pago"
                 element={user ? <Pago /> : <Navigate to="/login" replace />}
               />
-              
+              <Route
+                path="/rutinas/nueva"
+                element={
+                  user?.rol === 'admin' ? <NuevaRutina user={user} /> : <Navigate to="/" replace />
+                }
+              />
+              <Route
+                path="/rutinas/editar"
+                element={
+                  user?.rol === 'admin' ? <EditarRutina user={user} /> : <Navigate to="/" replace />
+                }
+              />
+              <Route
+                path="/rutinas/eliminar"
+                element={
+                  user?.rol === 'admin' ? <EliminarRutina user={user} /> : <Navigate to="/" replace />
+                }
+              />
 
               {/* Ruta por defecto */}
               <Route path="*" element={<Navigate to="/" replace />} />
