@@ -6,12 +6,14 @@ import { fileURLToPath } from "url";
 import mysql from "mysql2/promise";
 import ExcelJS from "exceljs";
 import pool from "./config/config.db.js"; // Ajusta la ruta según tu estructura
+import morgan from "morgan";
 
 // Importación de rutas
 import productosRoutes from "./routes/productos.js";
 import usuariosRoutes from "./routes/usuarios.js";
 import pedidosRoutes from "./routes/pedidos.js";
 import authRoutes from "./routes/auth.js";
+import rutinasRoutes from "./routes/rutinas.js"; // Nueva importación
 
 // Configuración
 dotenv.config();
@@ -32,6 +34,8 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/imagenes", express.static(path.join(__dirname, "public/imagenes")));
+
+
 
 // Rutas
 app.get("/api", (req, res) => {
@@ -100,6 +104,7 @@ app.use("/api/productos", productosRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/pedidos", pedidosRoutes);
 app.use("/api/usuarios", usuariosRoutes);
+app.use("/api/rutinas", rutinasRoutes); // Nueva ruta para rutinas
 
 // Manejo de errores
 app.use((req, res) => {
@@ -110,6 +115,8 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ error: "Error interno del servidor" });
 });
+
+app.use(morgan("dev")); 
 
 // Iniciar servidor
 const PORT = process.env.PORT || 3005;
@@ -123,5 +130,10 @@ app.listen(PORT, () => {
     - GET    http://localhost:${PORT}/api/exportar-productos
     - GET    http://localhost:${PORT}/api/pedidos/:usuario_id
     - POST   http://localhost:${PORT}/api/pedidos
+    - GET    http://localhost:${PORT}/api/rutinas
+    - GET    http://localhost:${PORT}/api/rutinas/:id
+    - POST   http://localhost:${PORT}/api/rutinas
+    - PUT    http://localhost:${PORT}/api/rutinas/:id
+    - DELETE http://localhost:${PORT}/api/rutinas/:id
     `);
 });
